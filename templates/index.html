@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫画下载器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 15px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .advanced-options {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .advanced-options h3 {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .stop-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stop-btn:hover {
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .tasks-list {
+            margin-top: 30px;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-id {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .task-info {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .task-label {
+            color: #666;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .task-value {
+            color: #333;
+        }
+
+        .task-url {
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .task-url:hover {
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-running {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-completed_with_warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-stopped {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-stopping {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .convert-icon {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .task-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .task-label {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 漫画下载器</h1>
+        
+        <form id="downloadForm">
+            <div class="form-group">
+                <label for="url">漫画URL *</label>
+                <input 
+                    type="text" 
+                    id="url" 
+                    name="url" 
+                    placeholder="https://www.manhuagui.com/comic/49301/" 
+                    required
+                >
+                <div class="help-text">请输入漫画页面的完整URL</div>
+            </div>
+
+            <div class="advanced-options">
+                <h3>⚙️ 高级选项</h3>
+                
+                <div class="form-group">
+                    <label for="element_selector">章节列表选择器</label>
+                    <input 
+                        type="text" 
+                        id="element_selector" 
+                        name="element_selector" 
+                        value="#chapter-list-0"
+                    >
+                    <div class="help-text">CSS选择器，用于定位章节列表</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="index">章节列表索引</label>
+                    <input 
+                        type="number" 
+                        id="index" 
+                        name="index" 
+                        value="0"
+                        min="0"
+                    >
+                    <div class="help-text">选择第几个章节列表（从0开始）</div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            id="headless" 
+                            name="headless"
+                        >
+                        <label for="headless" style="margin-bottom: 0;">无头模式（后台运行）</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            id="auto_convert" 
+                            name="auto_convert"
+                            checked
+                        >
+                        <label for="auto_convert" style="margin-bottom: 0;">
+                            <span class="convert-icon">📄</span>下载完成后自动转换为PDF
+                        </label>
+                    </div>
+                    <div class="help-text">将WebP图片合并为PDF文件，便于阅读和保存</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="proxy">代理地址（可选）</label>
+                    <input 
+                        type="text" 
+                        id="proxy" 
+                        name="proxy" 
+                        placeholder="127.0.0.1:7890"
+                    >
+                    <div class="help-text">格式：IP:端口，留空则不使用代理</div>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn">开始下载</button>
+        </form>
+
+        <div class="tasks-list">
+            <h2>📋 任务列表</h2>
+            <div id="tasksContainer">
+                <div class="loading">正在加载任务...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('downloadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const tasksContainer = document.getElementById('tasksContainer');
+
+        let allTasks = {};
+        let statusInterval = null;
+
+        // 页面加载时获取所有任务
+        window.addEventListener('load', () => {
+            loadAllTasks();
+            startGlobalPolling();
+        });
+
+        async function loadAllTasks() {
+            try {
+                const response = await fetch('/tasks');
+                const result = await response.json();
+
+                if (result.success) {
+                    allTasks = result.tasks;
+                    renderTasks();
+                } else {
+                    tasksContainer.innerHTML = '<div class="empty-state">加载任务失败</div>';
+                }
+            } catch (error) {
+                console.error('加载任务失败:', error);
+                tasksContainer.innerHTML = '<div class="empty-state">加载任务失败</div>';
+            }
+        }
+
+        function renderTasks() {
+            if (Object.keys(allTasks).length === 0) {
+                tasksContainer.innerHTML = '<div class="empty-state">暂无任务</div>';
+                return;
+            }
+
+            let html = '';
+            for (const [taskId, task] of Object.entries(allTasks)) {
+                html += createTaskCard(taskId, task);
+            }
+            tasksContainer.innerHTML = html;
+
+            // 为所有停止按钮添加事件监听
+            document.querySelectorAll('.stop-task-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const taskId = e.target.dataset.taskId;
+                    stopTask(taskId);
+                });
+            });
+        }
+
+        function createTaskCard(taskId, task) {
+            const statusClass = `status-${task.status.replace(/_/g, '_')}`;
+            const statusText = getStatusText(task.status);
+            const canStop = task.status === 'running';
+            const autoConvert = task.auto_convert ? '是' : '否';
+
+            return `
+                <div class="task-card" data-task-id="${taskId}">
+                    <div class="task-header">
+                        <div class="task-id">任务 #${taskId}</div>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="task-info">
+                        <span class="task-label">URL:</span>
+                        <a href="${task.url}" target="_blank" class="task-url">${task.url}</a>
+                    </div>
+                    <div class="task-info">
+                        <span class="task-label">自动转换PDF:</span>
+                        <span class="task-value">${autoConvert}</span>
+                    </div>
+                    <div class="task-info">
+                        <span class="task-label">消息:</span>
+                        <span class="task-value">${task.message}</span>
+                    </div>
+                    ${canStop ? `
+                    <div class="button-group">
+                        <button class="stop-btn stop-task-btn" data-task-id="${taskId}">停止下载</button>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'running': '运行中',
+                'completed': '已完成',
+                'completed_with_warning': '已完成（有警告）',
+                'failed': '失败',
+                'stopped': '已停止',
+                'stopping': '停止中'
+            };
+            return statusMap[status] || status;
+        }
+
+        async function stopTask(taskId) {
+            if (!confirm('确定要停止此下载任务吗？')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/stop/${taskId}`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('停止信号已发送');
+                    loadAllTasks(); // 刷新任务列表
+                } else {
+                    alert('停止失败: ' + result.message);
+                }
+            } catch (error) {
+                alert('请求失败: ' + error.message);
+            }
+        }
+
+        function startGlobalPolling() {
+            if (statusInterval) {
+                clearInterval(statusInterval);
+            }
+
+            // 每3秒刷新一次所有任务状态
+            statusInterval = setInterval(() => {
+                loadAllTasks();
+            }, 3000);
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                url: document.getElementById('url').value,
+                element_selector: document.getElementById('element_selector').value,
+                index: parseInt(document.getElementById('index').value),
+                headless: document.getElementById('headless').checked,
+                proxy: document.getElementById('proxy').value || null,
+                auto_convert: document.getElementById('auto_convert').checked
+            };
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '提交中...';
+
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('任务已提交！任务ID: ' + result.task_id);
+                    // 立即刷新任务列表
+                    loadAllTasks();
+                    // 清空URL输入框
+                    document.getElementById('url').value = '';
+                } else {
+                    alert('提交失败: ' + result.message);
+                }
+            } catch (error) {
+                alert('请求失败: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '开始下载';
+            }
+        });
+    </script>
+</body>
+</html>
